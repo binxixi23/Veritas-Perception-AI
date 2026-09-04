@@ -1,31 +1,71 @@
 import cv2
 import os
 import torch
+import yt_dlp
 from transformers import CLIPProcessor, CLIPModel
 from PIL import Image
 
 class VeritasPerceptionAI:
-    def __init__(self, video_path, output_dir="extracted_frames"):
-        self.video_path = video_path
+    def __init__(self, target_source, output_dir="extracted_frames", temp_input_dir="temp_inputs"):
+        """
+        Initialize the empirical perception engine.
+        :param target_source: Can be a local video file path or a direct YouTube URL.
+        """
+        self.target_source = target_source
         self.output_dir = output_dir
-        # Khởi tạo mô hình Thị giác máy tính CLIP để trích xuất đặc trưng hình ảnh độc lập
+        self.temp_input_dir = temp_input_dir
+        
+        # Initialize Deep Vision Neural Pipeline for empirical validation
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32").to(self.device)
         self.processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
         
-        if not os.path.exists(self.output_dir):
-            os.makedirs(self.output_dir)
+        # Create operational environment infrastructure
+        for path in [self.output_dir, self.temp_input_dir]:
+            if not os.path.exists(path):
+                os.makedirs(path)
+
+    def download_youtube_stream(self):
+        """
+        Autonomous Stream Ingestion: Pulls the physical media container directly from 
+        the YouTube source node without human proxies or browsers.
+        """
+        ydl_opts = {
+            'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
+            'outtmpl': f'{self.temp_input_dir}/%(title)s.%(ext)s',
+            'quiet': True,
+            'no_warnings': True
+        }
+        
+        print(f"[STREAM INGESTION] Penetrating YouTube network interface for: {self.target_source}")
+        try:
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(self.target_source, download=True)
+                filename = ydl.prepare_filename(info)
+                print(f"[INGESTION SUCCESS] Secure file delivery established: {filename}")
+                return filename
+        except Exception as e:
+            print(f"[INGESTION ERROR] Failed to intercept online media stream: {str(e)}")
+            return None
 
     def extract_and_analyze_frames(self, frame_interval=30):
         """
-        'Mở mắt' cho AI: Đọc trực tiếp file video vật lý và bóc tách từng khung hình
+        Deconstructs the target video file matrix array into chronological frame instances.
         """
-        cap = cv2.VideoCapture(self.video_path)
+        # Determine if target is a network URL or local vector path
+        working_file = self.target_source
+        if "youtube.com" in self.target_source or "youtu.be" in self.target_source:
+            downloaded_path = self.download_youtube_stream()
+            if not downloaded_path:
+                return False
+            working_file = downloaded_path
+
+        cap = cv2.VideoCapture(working_file)
         if not cap.isOpened():
-            print(f"[XÓA MÙ THẤT BẠI] Không thể mở file video: {self.video_path}")
+            print(f"[XÓA MÙ THẤT BẠI] Unable to map video matrix array: {working_file}")
             return False
 
-        print(f"[KHỞI ĐỘNG GIÁC QUAN] Đang quét video thực chứng vật lý...")
+        print(f"[SENSORY FUSION] Initiating continuous physical pixel matrix scan...")
         frame_count = 0
         extracted_count = 0
         
@@ -34,29 +74,31 @@ class VeritasPerceptionAI:
             if not ret:
                 break
                 
-            # Cứ mỗi 30 khung hình (khoảng 1 giây) trích xuất 1 lần để phân tích dấu vết vật lý
+            # Sample spatial state distributions at chosen sampling rate interval
             if frame_count % frame_interval == 0:
                 frame_name = f"frame_{frame_count}.jpg"
                 frame_save_path = os.path.join(self.output_dir, frame_name)
                 cv2.imwrite(frame_save_path, frame)
                 
-                # AI tự chứng thực bằng mô hình thị giác (Không thông qua văn bản)
+                # Execute direct high-dimensional empirical evaluation pass
                 self._analyze_visual_authenticity(frame_save_path, frame_count)
                 extracted_count += 1
                 
             frame_count += 1
             
         cap.release()
-        print(f"[HOÀN THÀNH THỰC CHỨNG] Đã trích xuất và phân tích {extracted_count} khung hình quan trọng.")
+        print(f"[EMPIRICAL RETRIEVAL] Completed inspection of {extracted_count} deep tensor structures.")
         return True
 
     def _analyze_visual_authenticity(self, image_path, frame_index):
         """
-        Tầng phân tích giác quan sâu: Kiểm tra các dấu hiệu bất thường của điểm ảnh (pixel)
+        Evaluates physical consistency checks across raw pixel tensor configurations.
         """
         image = Image.open(image_path)
-        inputs = self.processor(text=["real lecture video", "fake generated video, deepfake, cgi"], 
-                                images=image, return_tensors="pt", padding=True).to(self.device)
+        inputs = self.processor(
+            text=["real authentic footage", "fake generated media, deepfake simulation, staged cgi"], 
+            images=image, return_tensors="pt", padding=True
+        ).to(self.device)
         
         with torch.no_grad():
             outputs = self.model(**inputs)
@@ -64,14 +106,12 @@ class VeritasPerceptionAI:
         logits_per_image = outputs.logits_per_image
         probs = logits_per_image.softmax(dim=-1).cpu().numpy()[0]
         
-        # In ra đánh giá thực chứng độc lập của AI cho từng giây trong video
-        print(f" -> Khung hình {frame_index} | Thật: {probs[0]:.2f} | Nghi vấn Giả/Dàn dựng: {probs[1]:.2f}")
+        print(f" -> Frame Matrix Index {frame_index:05d} | Empirical Reality: {probs[0]:.2f} | Synthetic Bias: {probs[1]:.2f}")
 
 if __name__ == "__main__":
-    # Đường dẫn tới video bạn muốn AI tự chứng thực
-    # Ví dụ: video tranh biện Harvard hoặc bất kỳ video nào cần kiểm chứng
-    target_video = "path_to_your_video.mp4" 
+    # Test vector input matrix: Supports local physical files or URL streams
+    # e.g., "https://youtube.com"
+    test_target = "https://youtube.com" 
     
-    # Khởi chạy hệ thống Veritas
-    verifier = VeritasPerceptionAI(video_path=target_video)
-    verifier.extract_and_analyze_frames(frame_interval=30)
+    verifier = VeritasPerceptionAI(target_source=test_target)
+    verifier.extract_and_analyze_frames(frame_interval=60)
