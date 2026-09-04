@@ -1,0 +1,17 @@
+# Caches và thư viện
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Thư mục chứa dữ liệu tạm thời khi chạy app
+extracted_frames/
+app_extracted_frames/
+temp_inputs/
+
+# Định dạng video hoặc ảnh nặng
+*.mp4
+*.mov
+*.avi
+*.jpg
+*.png
