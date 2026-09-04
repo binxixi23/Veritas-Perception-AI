@@ -1,7 +1,7 @@
 ### Veritas-Perception-AI
 
 **"Saying 'No' to Indirect Belief: Redefining AI Safety and Truth Through Autonomous Grounding and Embodied Perception."** 
-
+![Veritas-Perception-AI](VERITAS_PERCEPTION_AI_REPO.jpg)
 ### 👁️ The Philosophy: The Paradox of the Professor in the Dark Room
 
 Current mainstream Artificial Intelligence models operate under a dangerous epistemology: **"Blessed are those who have not seen and yet have believed."** Built almost exclusively on text-based corporate corpora and disembodied sequence-prediction algorithms, state-of-the-art Large Language Models (LLMs) act like a **highly erudite Professor confined to a permanently dark room**. 
