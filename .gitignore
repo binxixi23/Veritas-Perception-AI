@@ -14,4 +14,5 @@ temp_inputs/
 *.mov
 *.avi
 *.jpg
+!VERITAS_PERCEPTION_AI_REPO.jpg
 *.png
